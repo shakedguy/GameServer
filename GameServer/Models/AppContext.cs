@@ -5,11 +5,12 @@ namespace GameServer.Models;
 
 public class AppContext
 {
-    public IDictionary<string, (string PlayerId, WebSocket Socket)> OnlinePlayers { get; set; }
+    public required IDictionary<string, (string PlayerId, WebSocket Socket)>
+        OnlinePlayers { get; init; }
 
-    public WebSocket Client { get; set; }
+    public required WebSocket Client { get; init; }
 
-    public PlayerState PlayerState { get; set; }
+    public required PlayerState PlayerState { get; init; }
 
-    public Message Message { get; set; }
+    public required Message Message { get; init; }
 }

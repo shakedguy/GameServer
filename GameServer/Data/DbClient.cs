@@ -27,6 +27,12 @@ public class DbClient : IDbClient
 
     private readonly DbSettings _settings;
 
+    private static readonly string _dirPath =
+        Directory.Exists(Path.Combine(Environment.CurrentDirectory,
+            "GameServer"))
+            ? Path.Combine(Environment.CurrentDirectory, "GameServer")
+            : Environment.CurrentDirectory;
+
 
     public DbClient(DbDataSource connectionFactory,
         IOptions<DbSettings> options)
@@ -138,7 +144,8 @@ public class DbClient : IDbClient
     public void Migrate(DbConnection connection
     )
     {
-        var migrationPath = Path.GetFullPath(_settings.MigrationsPath);
+        var migrationPath =
+            Path.GetFullPath(Path.Combine(_dirPath, _settings.MigrationsPath));
         if (!Directory.Exists(migrationPath))
         {
             throw new DirectoryNotFoundException(

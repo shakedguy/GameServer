@@ -13,7 +13,7 @@ public class LoginRoute : IRoute
     private readonly IRepository<Player> _playerRepository;
     private readonly IRepository<PlayerState> _playerStateRepository;
     public string Event => nameof(LoginMessage);
-    public Func<AppContext, Task> Handler { get; set; }
+    public Func<AppContext, Task> Handler { get; }
 
     public LoginRoute(
         ILogger<LoginRoute> logger,
