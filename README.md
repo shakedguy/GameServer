@@ -1,6 +1,8 @@
 # Game Server
 
-## Overview
+### .NET 8 WebSocket game server
+
+#### Overview
 
 In order to run the game:
 1. Build the solution
