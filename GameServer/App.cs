@@ -9,16 +9,16 @@ namespace GameServer;
 public class App : IDisposable, IAsyncDisposable
 {
     private readonly ILogger<App> _logger;
-    private readonly ClientHandler _clientHandler;
+    private readonly Router _router;
     private readonly IDbClient _dbClient;
     private readonly HttpListener _server;
     private readonly ServerSettings _settings;
 
     public App(IOptions<ServerSettings> options, ILogger<App> logger,
-        ClientHandler clientHandler, IDbClient dbClient)
+        Router router, IDbClient dbClient)
     {
         _logger = logger;
-        _clientHandler = clientHandler;
+        _router = router;
         _dbClient = dbClient;
         _settings = options.Value;
         _server = new HttpListener { Prefixes = { _settings.Url } };
@@ -59,7 +59,7 @@ public class App : IDisposable, IAsyncDisposable
         }
 
         var wsContext = await context.AcceptWebSocketAsync(null);
-        _ = _clientHandler.Handle(wsContext.WebSocket);
+        _ = _router.Handle(wsContext.WebSocket);
     }
 
     private void StopServer()

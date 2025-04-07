@@ -3,6 +3,7 @@ using System.Text.Json;
 using GameServer;
 using GameServer.Configs;
 using GameServer.Data;
+using GameServer.Routes;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +52,10 @@ builder.ConfigureServices(
         services.AddTransient<IRepository<Player>, PlayersRepository>();
         services
             .AddTransient<IRepository<PlayerState>, PlayerStateRepository>();
-        services.AddTransient<ClientHandler>();
+        services.AddTransient<IRoute, LoginRoute>();
+        services.AddTransient<IRoute,SendGiftRoute>();
+        services.AddTransient<IRoute,UpdateResourcesRoute>();
+        services.AddTransient<Router>();
         services.AddSingleton<App>();
     });
 
