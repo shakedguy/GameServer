@@ -23,7 +23,8 @@ for example:
 ```csharp
 public class MyRoute : IRoute
 {
-    public string Event => nameof(MyRoute);
+   public string Event => nameof(MyRoute);
+   
    public Func<AppContext, Task> Handler => async (context) =>
     {
         // Handle the request here
