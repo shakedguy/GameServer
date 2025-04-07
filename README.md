@@ -17,6 +17,25 @@ In order to run the game:
     ```
     dotnet run --project GameClient/GameClient.csproj
     ```
+4. For Running tests
+    ```
+    dotnet test --no-build --verbosity normal
+    ```
+
+#### Configuration
+You can configure the server and the client by modifying the `appsettings.json` default configuration file in each project folder:
+```json
+{
+  "ServerSettings": {
+    "Host": "127.0.0.1",
+    "Port": 5000
+  },
+  "DbSettings": {
+    "ConnectionString": "Data Source=game.db;Pooling=True;",
+  }
+}
+```
+
 
 If you want to add routes to the server, you can do so by adding a new class that implements the `IRoute` interface.
 for example:
