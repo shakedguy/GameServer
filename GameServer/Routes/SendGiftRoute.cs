@@ -25,7 +25,16 @@ public class SendGiftRoute : IRoute
 
     private async Task HandleSendGift(AppContext context)
     {
-        var gift = context.Message as SendGiftMessage;
+        var gift = (SendGiftMessage)context.Message;
+
+        if (gift.To == context.PlayerState.PlayerId)
+        {
+            await context.Client.PublishAsync(
+                new ErrorMessage("Cannot send gift to yourself.", 400));
+            return;
+        }
+
+
         var receiverState = await _playerStateRepository.GetAsync(gift.To);
 
         if (receiverState is null)
