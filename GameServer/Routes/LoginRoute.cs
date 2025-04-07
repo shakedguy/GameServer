@@ -30,7 +30,7 @@ public class LoginRoute : IRoute
 
     private async Task HandleMessage(AppContext context)
     {
-        var login = context.Message as LoginMessage;
+        var login = (LoginMessage)context.Message;
 
         if (context.OnlinePlayers.ContainsKey(login.DeviceId))
         {
@@ -42,43 +42,55 @@ public class LoginRoute : IRoute
         }
 
         var player =
-            await _playerRepository.GetByAsync(nameof(Player.DeviceId),
-                login.DeviceId);
-        bool isNewPlayer = player is null;
-
-        PlayerState? newState = null;
-        if (isNewPlayer)
+            await GetOrCreatePlayer(login.DeviceId);
+        if (player is null)
         {
-            player = await _playerRepository.AddAsync(new Player
-                { DeviceId = login.DeviceId });
-            if (player == null)
-            {
-                await context.Client.PublishAsync(
-                    new ErrorMessage("Failed to create player.", 500));
-                return;
-            }
-
-            newState = await CreateNewStateAsync(player.Id);
-        }
-        else
-        {
-            newState = await _playerStateRepository.GetAsync(player.Id);
+            await context.Client.PublishAsync(
+                new ErrorMessage("Failed to create player.", 500));
+            return;
         }
 
+        var newState = await GetOrCreateState(player.Id);
         if (newState is null)
         {
             await context.Client.PublishAsync(
-                new ErrorMessage("Player not found.", 400));
+                new ErrorMessage("Failed to create player state.", 500));
             return;
         }
 
         context.PlayerState.PlayerId = player.Id;
         context.PlayerState.Update(newState.Coins, newState.Rolls);
-
         context.OnlinePlayers[login.DeviceId] = (player.Id, context.Client);
         await context.Client.PublishAsync(
             new LoginSuccessMessage(player.Id, context.PlayerState.Balance));
     }
+
+
+    private async Task<Player?> GetOrCreatePlayer(string deviceId)
+    {
+        var player =
+            await _playerRepository.GetByAsync(nameof(Player.DeviceId),
+                deviceId);
+        if (player is null)
+        {
+            player = await _playerRepository.AddAsync(new Player
+                { DeviceId = deviceId });
+        }
+
+        return player;
+    }
+
+    private async Task<PlayerState?> GetOrCreateState(string playerId)
+    {
+        var state = await _playerStateRepository.GetAsync(playerId);
+        if (state is null)
+        {
+            state = await CreateNewStateAsync(playerId);
+        }
+
+        return state;
+    }
+
 
     private Task<PlayerState?> CreateNewStateAsync(string playerId)
     {
