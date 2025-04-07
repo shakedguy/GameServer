@@ -49,9 +49,9 @@ builder.ConfigureServices(
                 .ConnectionString);
         });
         services.AddSingleton<IDbClient, DbClient>();
-        services.AddTransient<IRepository<Player>, PlayersRepository>();
+        services.AddScoped<IRepository<Player>, PlayersRepository>();
         services
-            .AddTransient<IRepository<PlayerState>, PlayerStateRepository>();
+            .AddScoped<IRepository<PlayerState>, PlayerStateRepository>();
         services.AddTransient<IRoute, LoginRoute>();
         services.AddTransient<IRoute,SendGiftRoute>();
         services.AddTransient<IRoute,UpdateResourcesRoute>();
